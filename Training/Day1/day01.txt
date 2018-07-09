@@ -1,0 +1,205 @@
++ Course contents:
+	- Reflection
+	- Annotations
+	- Maven
+	- JDBC
+	- Servlet
+	- JSP
+	- Hibernate - 5.2
+	- Spring - 4.3
+	
++ Pre-requisites:
+	- Core Java -- OOP, Collections, IO, ...
+	- Web Programming -- HTML, JS, CSS, XML.
+	- Database -- SQL
+	
++ Not included:
+	- Servlet -- New features - WebSockets.
+	- Spring Boot -- is not a new framework.
+		- Umbrella covering many of existing spring frameworks like Spring MVC, Spring REST, Spring Data, Spring Messaging, ...
+	
++ Schedule:
+	- 8.00 am to 2.00 pm -- 8 Weekends (15 days).
+		- 8.00 am to 11.30 am -- Lecture
+		- 11.30 am to 2.00 pm -- Lab **
+	
++ Evaluation:
+	- Lab Exam + MCQ Exam -- Certification.	
+	
+--------------------------------------------
++ Reflection:
+	- Applications:
+		- Get info about class & its members.
+		- Create object & invoke methods at runtime.
+	- .java --> Java compiler (javac) --> .class
+	- .class contains -- bytecode + metadata
+	- metadata of a class --> java.lang.Class object
+	- To get java.lang.Class object associated with any class/type:
+		- Class c = Class.forName("pkg.ClassName");
+		- Class c = obj.getClass();
+		- Class c = ClassName.class;
+	- To get metadata/info about class:
+		- c.getName()
+		- c.getSuperClass()
+		- c.getSuperInterfaces()
+		- c.getAnnotations()
+		- c.isEnum(), c.isInterface(), ...
+		- c.getFields()
+		- c.getMethods()
+		- c.getConstructors()
+	- To create object:
+		- Object obj = c.newInstance();
+
+--------------------------------------------
++ Annotations:
+	- Added in Java 5.0
+	+ Inheritace:
+		- Applications of class:
+			- Reusablitiy -- fields & methods.
+			- Runtime polymorphism -- Override methods.
+		- Applications of abstract class:
+			- Reusablitiy -- fields & methods.
+			- Runtime polymorphism -- Override methods.
+			- Contract -- force to override abstract methods.			
+		- Applications of interface:
+			- Runtime polymorphism -- Override methods.
+			- Contract -- force to override all methods.
+			* Used to develop/provide "specifications".
+				e.g. JDBC, Servlet, EJB, ...
+		- Applications of marker interface:
+			- To mark/tag a type with some functionality. It associate extra info (metadata) with the type.
+			- e.g. Serializable, Cloneable, ...
+				- Serialiable --> Allows JVM to convert object into sequence of bytes and vice versa -- in ObjectOutputStream.writeObject() and ObjectInputStream.readObject().
+				- Cloneable --> Allows JVM to create a copy of the object into Object.clone() method.
+	- Annotations used to associate metadata with a type, a field, a method, a method parameter, ...
+	- Annotations types/retention policies:
+		1. SOURCE:
+			- Processed by the compiler & discarded.
+			- Not added in .class file.
+			- e.g. @Override --> tells compiler to compare method decl with super class method decl. If not matching, raise compiler error.
+			- e.g. @SupressWarning --> tell compiler to remove few warning.
+			- e.g. @Deprecated --> tell compiler to raise warning if this type/member is used.	
+		2. CLASS:
+			- Processed by the class loader & then discarded.
+			- Not present in JVM at runtime.
+			- Mainly used for config/settings of a type.
+		3. RUNTIME:
+			- Loaded & maintained at runtime in JVM memory.
+			- Can be processed using reflection at runtime -- c.getAnnotations().
+			- Heavily used by all frameworks e.g. 
+				Hibernate: @Table, @Column, @Entity, @OneToMany, ...
+				Spring: @Controller, @RequestMapping, @PathVariable, @ModelAttribute, ...
+	- Custom annotation:
+		@Retention(RetentionPolicy.RUNTIME)
+		@Target
+		@interface Readme {
+			String value();
+			String company() default "SunBeam";
+		}
+			
+--------------------------------------------
++ Java Proxies -- TODO
++ ClassLoader -- TODO
+--------------------------------------------
+
++ JDBC -- Java DataBase Connectivity -- RDBMS only.
+	- Is a specification by Sun/Oracle -- JDBC4.
+	- Interfaces + Helper classes:
+		- Driver, Connection, Statement, ResultSet, ...
+		- DriverManager, ...
+	- Implementations:
+		- Type I --- Jdbc Odbc Bridge Driver
+		- Type II --- Partially in C & Java --- Vendor specific
+			- e.g. Oracle OCI driver -- outdated.
+		- Type III --- Middleware driver
+			- e.g. WebLogic RMI driver
+		- Type IV --- Fully in Java -- Portable -- Vendor specific
+			- e.g. MySQL Connector/J (mysql-connector-x.y.z.jar) , Oracle thin driver (ojdbcx.jar), ...
+			- Internally uses TCP sockects to connect to database and get results.
+	- RDBMS <--> JDBC Driver <--> Java application.
+	- JDBC Steps:
+		1. Load & register driver class.
+		2. Get JDBC connection (using DriverManager).
+		3. Create JDBC statement (SQL query).
+		4. Execute the query and collect result.
+			- SELECT ---> executeQuery() -- ResultSet (rows & cols)
+			OR
+			- Non-SELECT --> executeUpdate() -- int (affected rows).
+		5. Close all.
+	- JDBC objects:
+		1. Driver ---> Create socket connection with database & authenticate. Should be registered with DriverManager. In JDBC4, this is doen automatically.
+		2. Connection ---> Encapsulate socket connection & used for creating statements and managing transactions.
+		3. Statement ---> Reresents SQL query. Can be DDL, DML or DQL.
+			-- PreparedStatement -- For executing parameterized queries.
+				e.g. INSERT INTO DEPT VALUES(?,?,?);
+			-- CallableStatement -- For executing stored procedures.
+				e.g. CALL SP_ADDEMP(?,?,?,?)
+		4. ResultSet ---> Like a cursor in RDBMS. Used to access records/rows one by one.	
+
++ SQL Injection:
+	- Statement:
+		String empno = sc.nextLine();
+		String sql = "DELETE FROM EMP WHERE EMPNO=" + empno;
+			-- If user input is "11"
+				-- Query: DELETE FROM EMP WHERE EMPNO=11
+			-- If user input is "11 OR 1"
+				-- Query: DELETE FROM EMP WHERE EMPNO=11 OR 1
+
+	- PreparedStatement:
+		String empno = sc.nextLine();
+		String sql = "DELETE FROM EMP WHERE EMPNO=?";
+		
+			stmt.setString(1, empno); --> assigns value to param 
+
++ JDBC Programming:
+	
+-------------------------------------------------------------------------
++ AutoCloseable interface ---> try-with-resource -- 1.7
+	- e.g. "Connection" is inherited from "AutoCloseable" interface.
+		try(Connection con = DriverManager.getConnection(...)) {
+			// ...
+		} // ---> con will be auto closed (irrespective of exception)
+		catch(Exception e) {
+			// ...
+		}
+
+-------------------------------------------------------------------------
+class DeptDao implements AutoCloseable {
+	public void open();
+	public void close();
+	public void addDept(Dept d);
+	public void updateDept(Dept d);
+	public void deleteDeptByDeptno(int deptno);
+	public Dept findDeptByDeptno(int deptno);
+	public List<Dept> findAllDept();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
