@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="b1" class="com.sunbeaminfo.spring.Box">
+        <property name="length" value="10" />
+        <property name="width" value="8" />
+        <property name="heitht" value="6" />
+    </bean>
+    
+    
+    <bean id="b2" class="com.sunbeaminfo.spring.Box" >
+        <constructor-arg index="0" value = "5" />
+        <constructor-arg index="1" value = "4" />
+        <constructor-arg index="2" value = "3" />
+    </bean>
+
+</beans>

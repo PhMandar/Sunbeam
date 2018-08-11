@@ -1,0 +1,29 @@
+body {
+    background-image: url("Images/online-food.gif");
+    background-image: url("Images/online-food.gif");
+    background-repeat: no-repeat;
+    background-color: #ffffff;
+}
+
+h2 {
+    color : #ff0000;
+    float: right;
+}
+
+div {
+    /* background-color : #efefef; */
+    color: #0000ff; 
+    background-position: right bottom;
+    text-align: left;
+    border: 3px solid green;
+    padding: 70px 0;
+    float: right;
+}
+
+table {
+	color: blue;
+	background-position: right;
+	text-align: left;
+	border: 2px solid gray;
+	float: right;
+}
